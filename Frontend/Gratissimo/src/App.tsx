@@ -1,5 +1,7 @@
+import { useEffect, useState } from 'react'
 import './styles/main.scss'
 import HomePage from './pages/HomePage'
+import SearchResultsPage from './pages/SearchResultsPage'
 import logoWhite from './assets/logo/logo-white.png'
 import facebookIcon from './assets/icons/SoMe/Facebook.png'
 import googlePlusIcon from './assets/icons/SoMe/Google Plus.png'
@@ -7,6 +9,18 @@ import instagramIcon from './assets/icons/SoMe/Instagram Circle.png'
 import linkedInIcon from './assets/icons/SoMe/LinkedIn Circled.png'
 
 function App() {
+  const [location, setLocation] = useState(window.location.href)
+
+  useEffect(() => {
+    const updateLocation = () => setLocation(window.location.href)
+    window.addEventListener('locationchange', updateLocation)
+    window.addEventListener('popstate', updateLocation)
+    return () => {
+      window.removeEventListener('locationchange', updateLocation)
+      window.removeEventListener('popstate', updateLocation)
+    }
+  }, [])
+
   return (
     <div className="app-shell">
       <header className="site-header">
@@ -18,7 +32,7 @@ function App() {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <a href="#">Alle Jobs</a>
+            <a href="/">Alle Jobs</a>
             <a href="#">Opret annonce</a>
             <a href="#">Nyheder</a>
           </div>
@@ -31,7 +45,7 @@ function App() {
       </header>
 
       <main className="page-content">
-        <HomePage />
+        {new URL(location).pathname === '/search-results' ? <SearchResultsPage /> : <HomePage />}
       </main>
 
       <footer className="site-footer">

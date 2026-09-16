@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import searchIcon from '../assets/icons/icons8-search-50.png'
+import SearchControls from '../components/SearchControls'
 
 type JobCategory = {
   id: number
@@ -9,6 +9,8 @@ type JobCategory = {
 type JobListing = {
   jobCategoryId: number
   workHome: string
+  region?: { name: string }
+  workType?: { type: string }
 }
 
 type Region = {
@@ -65,7 +67,6 @@ function shuffle<T>(items: T[]) {
 }
 
 function HomePage() {
-  const [searchValue, setSearchValue] = useState('')
   const [categories, setCategories] = useState<JobCategory[]>([])
   const [jobListings, setJobListings] = useState<JobListing[]>([])
   const [regions, setRegions] = useState<Region[]>([])
@@ -118,14 +119,12 @@ function HomePage() {
     return counts
   }, {})
 
-  const homeWorkOptions = [...new Set(jobListings.map((job) => job.workHome).filter(Boolean))]
-  const filterOptions = [
-    { label: 'Region', options: ['Region', ...regions.map((region) => region.name)] },
-    { label: 'Kategori', options: ['Kategori', ...categories.map((category) => category.name ?? '')] },
-    { label: 'Arbejdstid', options: ['Arbejdstid', ...workTypes.map((workType) => workType.type)] },
-    { label: 'Periode', options: ['Periode'] },
-    { label: 'Hjemmearbejde', options: ['Hjemmearbejde', ...homeWorkOptions] },
-  ]
+  const filterOptions = {
+    region: regions.map((region) => region.name),
+    category: categories.map((category) => category.name ?? '').filter(Boolean),
+    workType: workTypes.map((workType) => workType.type),
+    workHome: [...new Set(jobListings.map((job) => job.workHome).filter(Boolean))],
+  }
 
   return (
     <section className="home-top">
@@ -134,35 +133,7 @@ function HomePage() {
         <a href="#">Log ind eller opret dig</a>
       </div>
 
-      <div className="search-area">
-        <h1>Søg frivilligt arbejde:</h1>
-        <form className="job-search" onSubmit={(event) => event.preventDefault()}>
-          <div className="search-input">
-            <img src={searchIcon} alt="" />
-            <input
-              type="text"
-              value={searchValue}
-              onChange={(event) => setSearchValue(event.target.value)}
-              placeholder="Eks. cafémedhjælper..."
-            />
-          </div>
-          <button type="submit">Søg</button>
-        </form>
-
-        <div className="filters">
-          <span className="filters-title">Filtrer:</span>
-          {filterOptions.map((filter) => (
-            <label className="filter-control" key={filter.label}>
-              <select defaultValue={filter.options[0]}>
-                {filter.options.map((option) => (
-                  <option key={option}>{option}</option>
-                ))}
-              </select>
-            </label>
-          ))}
-          <button className="filter-reset" type="button">Nulstil</button>
-        </div>
-      </div>
+      <SearchControls options={filterOptions} />
 
       <section className="home-section">
         <h2>Find job ved kategori</h2>
