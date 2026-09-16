@@ -2,17 +2,11 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #b40f0f;
-  color: #fff;
+  background: var(--main);
+  color: var(--white);
 }
 
 .page-content {
   flex: 1;
-  background: #efefef;
-}
-
-.content-slot {
-  max-width: 1280px;
-  min-height: 260px;
-  margin: 0 auto;
+  background: var(--alt-white);
 }
