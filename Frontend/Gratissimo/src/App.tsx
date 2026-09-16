@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import './styles/main.scss'
 import HomePage from './pages/HomePage'
 import SearchResultsPage from './pages/SearchResultsPage'
+import NewsDetailPage from './pages/NewsDetailPage'
 import logoWhite from './assets/logo/logo-white.png'
 import facebookIcon from './assets/icons/SoMe/Facebook.png'
 import googlePlusIcon from './assets/icons/SoMe/Google Plus.png'
@@ -10,6 +11,7 @@ import linkedInIcon from './assets/icons/SoMe/LinkedIn Circled.png'
 
 function App() {
   const [location, setLocation] = useState(window.location.href)
+  const currentPath = new URL(location).pathname
 
   useEffect(() => {
     const updateLocation = () => setLocation(window.location.href)
@@ -20,6 +22,12 @@ function App() {
       window.removeEventListener('popstate', updateLocation)
     }
   }, [])
+
+  const page = currentPath.startsWith('/search-results')
+    ? <SearchResultsPage />
+    : currentPath.startsWith('/news')
+      ? <NewsDetailPage />
+      : <HomePage />
 
   return (
     <div className="app-shell">
@@ -32,9 +40,9 @@ function App() {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <a href="/">Alle Jobs</a>
+            <a className={currentPath === '/' ? 'active' : ''} href="/">Alle Jobs</a>
             <a href="#">Opret annonce</a>
-            <a href="#">Nyheder</a>
+            <a className={currentPath.startsWith('/news') ? 'active' : ''} href="/news">Nyheder</a>
           </div>
 
           <div className="nav-actions">
@@ -45,7 +53,7 @@ function App() {
       </header>
 
       <main className="page-content">
-        {new URL(location).pathname === '/search-results' ? <SearchResultsPage /> : <HomePage />}
+        {page}
       </main>
 
       <footer className="site-footer">

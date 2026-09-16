@@ -9,8 +9,6 @@ type JobCategory = {
 type JobListing = {
   jobCategoryId: number
   workHome: string
-  region?: { name: string }
-  workType?: { type: string }
 }
 
 type Region = {
@@ -151,14 +149,14 @@ function HomePage() {
         <h2>Udvalgte nyheder</h2>
         <div className="news-grid">
           {articles.slice(0, 3).map((article) => (
-            <article className="news-card" key={article.id}>
+            <a className="news-card" href={`/news/${article.id}`} key={article.id}>
               {article.imageUrl && <img src={articleImageUrl(article.imageUrl)} alt="" />}
               <div className="news-card-content">
                 <p>{formatDate(article.createdAt)} - {article.author}</p>
                 <h3>{article.title}</h3>
                 <span>{excerpt(article.content, 110)}</span>
               </div>
-            </article>
+            </a>
           ))}
         </div>
       </section>

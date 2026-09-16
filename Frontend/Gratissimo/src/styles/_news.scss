@@ -25,6 +25,8 @@
   border: 1px solid color-mix(in srgb, var(--black) 18%, transparent);
   border-radius: 8px;
   background: var(--white);
+  color: var(--black);
+  text-decoration: none;
 }
 
 .news-card img {
