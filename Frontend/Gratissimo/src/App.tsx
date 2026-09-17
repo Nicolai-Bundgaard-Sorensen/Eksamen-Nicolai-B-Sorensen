@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import type { MouseEvent } from 'react'
 import './styles/main.scss'
 import HomePage from './pages/HomePage'
 import SearchResultsPage from './pages/SearchResultsPage'
 import NewsDetailPage from './pages/NewsDetailPage'
 import AuthPage from './pages/AuthPage'
+import CreateJobPage from './pages/CreateJobPage'
 import { AuthProvider } from './context/AuthContext'
 import { useAuth } from './hooks/useAuth'
 import logoWhite from './assets/logo/logo-white.png'
@@ -11,6 +13,28 @@ import facebookIcon from './assets/icons/SoMe/Facebook.png'
 import googlePlusIcon from './assets/icons/SoMe/Google Plus.png'
 import instagramIcon from './assets/icons/SoMe/Instagram Circle.png'
 import linkedInIcon from './assets/icons/SoMe/LinkedIn Circled.png'
+
+const footerColumns = [
+  {
+    title: 'For jobsøgere',
+    links: ['Din kundeside', 'Opret Profil', 'Gemte jobs'],
+  },
+  {
+    title: 'For arbejdsgivere',
+    links: ['Virksomhedsprofil', 'Opret annonce', 'Jobannoncering', 'Rekruttering'],
+  },
+  {
+    title: 'Links',
+    links: ['Om Gratissimo', 'Job hos os', 'For investorer', 'Presse'],
+  },
+]
+
+const socialLinks = [
+  { name: 'LinkedIn', icon: linkedInIcon },
+  { name: 'Facebook', icon: facebookIcon },
+  { name: 'Instagram', icon: instagramIcon },
+  { name: 'Google Plus', icon: googlePlusIcon },
+]
 
 function App() {
   return (
@@ -26,6 +50,14 @@ function AppShell() {
   const currentPath = currentUrl.pathname
   const isRegisterPage = currentPath === '/login' && currentUrl.searchParams.get('mode') === 'register'
   const { isAuthenticated, logout } = useAuth()
+
+  function handleLogout(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault()
+    logout().then(() => {
+      window.history.pushState({}, '', '/')
+      window.dispatchEvent(new Event('locationchange'))
+    })
+  }
 
   useEffect(() => {
     const updateLocation = () => setLocation(window.location.href)
@@ -43,7 +75,9 @@ function AppShell() {
       ? <NewsDetailPage />
       : currentPath === '/login'
         ? <AuthPage />
-      : <HomePage />
+        : currentPath === '/opret-annonce'
+          ? <CreateJobPage />
+          : <HomePage />
 
   return (
     <div className="app-shell">
@@ -56,22 +90,31 @@ function AppShell() {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <a className={currentPath === '/' ? 'active' : ''} href="/">Alle Jobs</a>
-            <a href="#">Opret annonce</a>
-            <a className={currentPath.startsWith('/news') ? 'active' : ''} href="/news">Nyheder</a>
+            <a
+              className={currentPath === '/' ? 'active' : ''}
+              href="/"
+            >
+              Alle Jobs
+            </a>
+            <a
+              className={currentPath === '/opret-annonce' ? 'active' : ''}
+              href="/opret-annonce"
+            >
+              Opret annonce
+            </a>
+            <a
+              className={currentPath.startsWith('/news') ? 'active' : ''}
+              href="/news"
+            >
+              Nyheder
+            </a>
           </div>
 
           <div className="nav-actions">
             {isAuthenticated ? (
               <>
                 <a href="/min-side">Min side</a>
-                <a href="/" onClick={(event) => {
-                  event.preventDefault()
-                  logout().then(() => {
-                    window.history.pushState({}, '', '/')
-                    window.dispatchEvent(new Event('locationchange'))
-                  })
-                }}>Log ud</a>
+                <a href="/" onClick={handleLogout}>Log ud</a>
               </>
             ) : (
               <>
@@ -89,34 +132,16 @@ function AppShell() {
 
       <footer className="site-footer">
         <div className="footer-inner">
-          <div className="footer-column">
-            <h3>For jobsøgere</h3>
-            <ul>
-              <li><a href="#">Din kundeside</a></li>
-              <li><a href="#">Opret Profil</a></li>
-              <li><a href="#">Gemte jobs</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-column">
-            <h3>For arbejdsgivere</h3>
-            <ul>
-              <li><a href="#">Virksomhedsprofil</a></li>
-              <li><a href="#">Opret annonce</a></li>
-              <li><a href="#">Jobannoncering</a></li>
-              <li><a href="#">Rekruttering</a></li>
-            </ul>
-          </div>
-
-          <div className="footer-column">
-            <h3>Links</h3>
-            <ul>
-              <li><a href="#">Om Gratissimo</a></li>
-              <li><a href="#">Job hos os</a></li>
-              <li><a href="#">For investorer</a></li>
-              <li><a href="#">Presse</a></li>
-            </ul>
-          </div>
+          {footerColumns.map((column) => (
+            <div className="footer-column" key={column.title}>
+              <h3>{column.title}</h3>
+              <ul>
+                {column.links.map((link) => (
+                  <li key={link}><a href="#">{link}</a></li>
+                ))}
+              </ul>
+            </div>
+          ))}
 
           <div className="footer-column footer-contact">
             <h3>Vil du have jobs direkte i din indbakke?</h3>
@@ -130,10 +155,11 @@ function AppShell() {
           <div className="footer-column footer-meta">
             <p className="address">Fidusvej 23<br />9230 Øster Lundby<br />+45 22 13 22 13</p>
             <div className="socials">
-              <a href="#"><img src={linkedInIcon} alt="LinkedIn" /></a>
-              <a href="#"><img src={facebookIcon} alt="Facebook" /></a>
-              <a href="#"><img src={instagramIcon} alt="Instagram" /></a>
-              <a href="#"><img src={googlePlusIcon} alt="Google Plus" /></a>
+              {socialLinks.map((social) => (
+                <a href="#" key={social.name}>
+                  <img src={social.icon} alt={social.name} />
+                </a>
+              ))}
             </div>
           </div>
         </div>

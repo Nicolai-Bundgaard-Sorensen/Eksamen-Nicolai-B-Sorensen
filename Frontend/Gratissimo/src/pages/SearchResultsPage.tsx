@@ -156,8 +156,14 @@ function SearchResultsPage() {
               <p>Lokation: {job.city}</p>
               <p>Indrykket: {formatDate(job.createdAt)}</p>
               <div className="result-actions">
-                <button type="button"><img src={favoriteIcon} alt="" />Gem</button>
-                <button type="button"><img src={openIcon} alt="" />Åben</button>
+                <button type="button">
+                  <img src={favoriteIcon} alt="" />
+                  Gem
+                </button>
+                <button type="button">
+                  <img src={openIcon} alt="" />
+                  Åben
+                </button>
               </div>
             </div>
           </article>
@@ -165,16 +171,31 @@ function SearchResultsPage() {
         {!results.length && <p className="empty-results">Ingen jobs fundet.</p>}
         {totalPages > 1 && (
           <nav className="results-pagination">
-            <button className="pagination-arrow" type="button" onClick={() => changePage(Math.max(1, currentPage - 1))}>
+            <button
+              className="pagination-arrow"
+              type="button"
+              onClick={() => changePage(Math.max(1, currentPage - 1))}
+            >
               <img src={backIcon} alt="Forrige side" />
             </button>
             {Array.from(
               { length: lastVisiblePage - firstVisiblePage + 1 },
               (_, index) => firstVisiblePage + index,
             ).map((page) => (
-              <button className={page === currentPage ? 'active' : ''} type="button" key={page} onClick={() => changePage(page)}>{page}</button>
+              <button
+                className={page === currentPage ? 'active' : ''}
+                type="button"
+                key={page}
+                onClick={() => changePage(page)}
+              >
+                {page}
+              </button>
             ))}
-            <button className="pagination-arrow" type="button" onClick={() => changePage(Math.min(totalPages, currentPage + 1))}>
+            <button
+              className="pagination-arrow"
+              type="button"
+              onClick={() => changePage(Math.min(totalPages, currentPage + 1))}
+            >
               <img src={nextIcon} alt="Næste side" />
             </button>
           </nav>
