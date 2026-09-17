@@ -1,43 +1,57 @@
-import { useState } from 'react'
-import type { FormEvent } from 'react'
-import searchIcon from '../assets/icons/icons8-search-50.png'
+import { useState } from "react";
+import type { FormEvent } from "react";
+import searchIcon from "../assets/icons/icons8-search-50.png";
 
 type SearchControlsProps = {
-  initialQuery?: string
-  options?: Record<string, string[]>
-}
+  initialQuery?: string;
+  options?: Record<string, string[]>;
+};
 
 const filters = [
-  { name: 'region', options: ['Region'] },
-  { name: 'category', options: ['Kategori'] },
-  { name: 'workType', options: ['Arbejdstid', 'Deltid', 'Fuldtid', 'Flex'] },
-  { name: 'period', options: ['Periode', 'Seneste uge', 'Seneste måned', 'Seneste år'] },
-  { name: 'workHome', options: ['Hjemmearbejde', 'On-site', 'Delvist'] },
-]
+  { name: "region", options: ["Region"] },
+  { name: "category", options: ["Kategori"] },
+  { name: "workType", options: ["Arbejdstid", "Deltid", "Fuldtid", "Flex"] },
+  {
+    name: "period",
+    options: ["Periode", "Seneste uge", "Seneste måned", "Seneste år"],
+  },
+  { name: "workHome", options: ["Hjemmearbejde", "On-site", "Delvist"] },
+];
 
-function SearchControls({ initialQuery = '', options = {} }: SearchControlsProps) {
-  const [query, setQuery] = useState(initialQuery)
-  const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({})
+function SearchControls({
+  initialQuery = "",
+  options = {},
+}: SearchControlsProps) {
+  const [query, setQuery] = useState(initialQuery);
+  const [selectedFilters, setSelectedFilters] = useState<
+    Record<string, string>
+  >({});
 
   function navigate(path: string) {
-    window.history.pushState({}, '', path)
-    window.dispatchEvent(new Event('locationchange'))
+    window.history.pushState({}, "", path);
+    window.dispatchEvent(new Event("locationchange"));
   }
 
   function submitSearch(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    const params = new URLSearchParams()
-    if (query.trim()) params.set('q', query.trim())
+    event.preventDefault();
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
     Object.entries(selectedFilters).forEach(([name, value]) => {
-      if (value) params.set(name, value)
-    })
-    const queryString = params.toString()
-    navigate(queryString ? `/search-results?${queryString}` : '/search-results')
+      if (value) params.set(name, value);
+    });
+    const queryString = params.toString();
+    navigate(
+      queryString ? `/search-results?${queryString}` : "/search-results",
+    );
   }
 
   function resetFilters() {
-    setSelectedFilters({})
-    navigate(query.trim() ? `/search-results?q=${encodeURIComponent(query.trim())}` : '/search-results')
+    setSelectedFilters({});
+    navigate(
+      query.trim()
+        ? `/search-results?q=${encodeURIComponent(query.trim())}`
+        : "/search-results",
+    );
   }
 
   return (
@@ -65,24 +79,29 @@ function SearchControls({ initialQuery = '', options = {} }: SearchControlsProps
               onChange={(event) => {
                 setSelectedFilters((current) => ({
                   ...current,
-                  [filter.name]: event.target.value === filter.options[0]
-                    ? ''
-                    : event.target.value,
-                }))
+                  [filter.name]:
+                    event.target.value === filter.options[0]
+                      ? ""
+                      : event.target.value,
+                }));
               }}
             >
               {[...filter.options, ...(options[filter.name] ?? [])]
-                .filter((option, index, values) => values.indexOf(option) === index)
+                .filter(
+                  (option, index, values) => values.indexOf(option) === index,
+                )
                 .map((option) => (
                   <option key={option}>{option}</option>
                 ))}
             </select>
           </label>
         ))}
-        <button className="filter-reset" type="button" onClick={resetFilters}>Nulstil</button>
+        <button className="filter-reset" type="button" onClick={resetFilters}>
+          Nulstil
+        </button>
       </div>
     </div>
-  )
+  );
 }
 
-export default SearchControls
+export default SearchControls;
