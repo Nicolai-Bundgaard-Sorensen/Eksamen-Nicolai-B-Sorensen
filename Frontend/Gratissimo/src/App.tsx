@@ -3,6 +3,9 @@ import './styles/main.scss'
 import HomePage from './pages/HomePage'
 import SearchResultsPage from './pages/SearchResultsPage'
 import NewsDetailPage from './pages/NewsDetailPage'
+import AuthPage from './pages/AuthPage'
+import { AuthProvider } from './context/AuthContext'
+import { useAuth } from './hooks/useAuth'
 import logoWhite from './assets/logo/logo-white.png'
 import facebookIcon from './assets/icons/SoMe/Facebook.png'
 import googlePlusIcon from './assets/icons/SoMe/Google Plus.png'
@@ -10,8 +13,19 @@ import instagramIcon from './assets/icons/SoMe/Instagram Circle.png'
 import linkedInIcon from './assets/icons/SoMe/LinkedIn Circled.png'
 
 function App() {
+  return (
+    <AuthProvider>
+      <AppShell />
+    </AuthProvider>
+  )
+}
+
+function AppShell() {
   const [location, setLocation] = useState(window.location.href)
-  const currentPath = new URL(location).pathname
+  const currentUrl = new URL(location)
+  const currentPath = currentUrl.pathname
+  const isRegisterPage = currentPath === '/login' && currentUrl.searchParams.get('mode') === 'register'
+  const { isAuthenticated, logout } = useAuth()
 
   useEffect(() => {
     const updateLocation = () => setLocation(window.location.href)
@@ -27,6 +41,8 @@ function App() {
     ? <SearchResultsPage />
     : currentPath.startsWith('/news')
       ? <NewsDetailPage />
+      : currentPath === '/login'
+        ? <AuthPage />
       : <HomePage />
 
   return (
@@ -46,8 +62,23 @@ function App() {
           </div>
 
           <div className="nav-actions">
-            <a href="#">Opret Profil</a>
-            <a href="#">Log ind</a>
+            {isAuthenticated ? (
+              <>
+                <a href="/min-side">Min side</a>
+                <a href="/" onClick={(event) => {
+                  event.preventDefault()
+                  logout().then(() => {
+                    window.history.pushState({}, '', '/')
+                    window.dispatchEvent(new Event('locationchange'))
+                  })
+                }}>Log ud</a>
+              </>
+            ) : (
+              <>
+                <a className={isRegisterPage ? 'active' : ''} href="/login?mode=register">Opret Profil</a>
+                <a className={currentPath === '/login' && !isRegisterPage ? 'active' : ''} href="/login">Log ind</a>
+              </>
+            )}
           </div>
         </nav>
       </header>
