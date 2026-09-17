@@ -62,15 +62,19 @@ function SearchControls({ initialQuery = '', options = {} }: SearchControlsProps
           <label className="filter-control" key={filter.name}>
             <select
               value={selectedFilters[filter.name] ?? filter.options[0]}
-              onChange={(event) => setSelectedFilters((current) => ({
-                ...current,
-                [filter.name]: event.target.value === filter.options[0] ? '' : event.target.value,
-              }))}
+              onChange={(event) => {
+                setSelectedFilters((current) => ({
+                  ...current,
+                  [filter.name]: event.target.value === filter.options[0]
+                    ? ''
+                    : event.target.value,
+                }))
+              }}
             >
               {[...filter.options, ...(options[filter.name] ?? [])]
                 .filter((option, index, values) => values.indexOf(option) === index)
                 .map((option) => (
-                <option key={option}>{option}</option>
+                  <option key={option}>{option}</option>
                 ))}
             </select>
           </label>

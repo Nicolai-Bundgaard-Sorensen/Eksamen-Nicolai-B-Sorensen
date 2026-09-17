@@ -1,0 +1,159 @@
+.create-job-page {
+  background: var(--white);
+  color: var(--black);
+}
+
+.create-job-intro {
+  padding: 28px 24px 24px;
+  text-align: center;
+  background: var(--alt-white);
+}
+
+.create-job-intro h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.create-job-intro p {
+  max-width: 500px;
+  margin: 16px auto 0;
+  font-size: 0.62rem;
+}
+
+.create-job-intro a {
+  display: inline-block;
+  margin-top: 16px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.create-job-form {
+  width: min(calc(100% - 36px), 760px);
+  margin: 0 auto;
+  padding: 28px 0 42px;
+  display: grid;
+  grid-template-columns: 1fr 1.35fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+.create-job-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.create-job-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  color: var(--black);
+  font-size: 0.62rem;
+}
+
+.create-job-form input,
+.create-job-form select,
+.create-job-form textarea {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--black) 16%, transparent);
+  border-radius: 4px;
+  background: var(--alt-white);
+  color: var(--black);
+  font: inherit;
+  font-size: 0.62rem;
+  outline: 0;
+}
+
+.create-job-form input,
+.create-job-form select {
+  height: 29px;
+  padding: 0 8px;
+}
+
+.create-job-form textarea {
+  flex: 1;
+  min-height: 0;
+  padding: 8px;
+  resize: vertical;
+}
+
+.create-job-form input:focus,
+.create-job-form select:focus,
+.create-job-form textarea:focus {
+  border-color: var(--accent);
+}
+
+.create-job-form small,
+.create-job-error {
+  color: var(--accent);
+  font-size: 0.56rem;
+}
+
+.create-job-description {
+  grid-column: 2;
+  grid-row: 1;
+  height: 100%;
+}
+
+.create-job-form > button {
+  grid-column: 2;
+  justify-self: end;
+  padding: 7px 20px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--white);
+  cursor: pointer;
+  font-size: 0.62rem;
+}
+
+.create-job-error,
+.create-job-success {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.create-job-success {
+  color: var(--accent);
+  font-size: 0.7rem;
+}
+
+.create-job-message {
+  min-height: 360px;
+  padding: 70px 24px;
+  text-align: center;
+}
+
+.create-job-message h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.create-job-message p {
+  font-size: 0.75rem;
+}
+
+.create-job-message a {
+  color: var(--accent);
+  font-size: 0.7rem;
+}
+
+@media (max-width: 640px) {
+  .create-job-form {
+    grid-template-columns: 1fr;
+  }
+
+  .create-job-description,
+  .create-job-form > button {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .create-job-form > button {
+    justify-self: start;
+  }
+}

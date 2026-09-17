@@ -6,6 +6,37 @@ const apiUrl = import.meta.env.VITE_API_URL
 
 type Mode = 'login' | 'register'
 
+type AuthFieldProps = {
+  label: string
+  value: string
+  placeholder: string
+  type?: 'email' | 'password' | 'text'
+  required?: boolean
+  onChange: (value: string) => void
+}
+
+function AuthField({
+  label,
+  value,
+  placeholder,
+  type = 'text',
+  required = false,
+  onChange,
+}: AuthFieldProps) {
+  return (
+    <label>
+      {label}
+      <input
+        required={required}
+        type={type}
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </label>
+  )
+}
+
 function AuthPage() {
   const { setSession } = useAuth()
   const [mode, setMode] = useState<Mode>(() => (
@@ -48,34 +79,45 @@ function AuthPage() {
           .filter(([field, value]) => field !== 'confirmPassword' && value !== ''),
       )
 
-    const response = await fetch(`${apiUrl}/api/${mode === 'login' ? 'login' : 'users'}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: new URLSearchParams(fields),
-    })
+    try {
+      const response = await fetch(`${apiUrl}/api/${mode === 'login' ? 'login' : 'users'}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams(fields),
+      })
 
-    const data = await response.json()
-    if (!response.ok) {
-      setError(data.error)
-      return
+      const data = await response.json()
+      if (!response.ok) {
+        setError(data.error)
+        return
+      }
+
+      if (mode === 'login') {
+        setSession(data.accessToken, data.refreshToken, data.user)
+        window.history.pushState({}, '', '/min-side')
+        window.dispatchEvent(new Event('locationchange'))
+        return
+      }
+
+      setMode('login')
+    } catch {
+      setError('Der kunne ikke oprettes forbindelse til serveren.')
     }
-
-    if (mode === 'login') {
-      setSession(data.accessToken, data.refreshToken, data.user)
-      window.history.pushState({}, '', '/min-side')
-      window.dispatchEvent(new Event('locationchange'))
-      return
-    }
-
-    setMode('login')
   }
 
   return (
     <section className="auth-page">
       <section className="auth-intro">
         <h1>Log ind eller opret dig som bruger</h1>
-        <p>Når du opretter en profil på Gratissimo får du adgang til at oprette, slette og redigere i jobannoncer. Som privatperson får du mulighed for at gemme de jobs du kunne være interesseret i.</p>
-        <button type="button" onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}>
+        <p>
+          Når du opretter en profil på Gratissimo får du adgang til at oprette,
+          slette og redigere i jobannoncer. Som privatperson får du mulighed for
+          at gemme de jobs du kunne være interesseret i.
+        </p>
+        <button
+          type="button"
+          onClick={() => switchMode(mode === 'login' ? 'register' : 'login')}
+        >
           Log ind for at gå til min side
         </button>
       </section>
@@ -83,14 +125,52 @@ function AuthPage() {
       <section className="auth-form-section">
         <h2>{mode === 'login' ? 'Log ind' : 'Opret ny profil'}</h2>
         <form className="auth-form" onSubmit={submit}>
-          <label>Email<input required type="email" placeholder="Skriv din email..." value={form.email} onChange={(event) => updateField('email', event.target.value)} /></label>
-          <label>Password<input required type="password" placeholder="Skriv dit password..." value={form.password} onChange={(event) => updateField('password', event.target.value)} /></label>
+          <AuthField
+            label="Email"
+            type="email"
+            required
+            placeholder="Skriv din email..."
+            value={form.email}
+            onChange={(value) => updateField('email', value)}
+          />
+          <AuthField
+            label="Password"
+            type="password"
+            required
+            placeholder="Skriv dit password..."
+            value={form.password}
+            onChange={(value) => updateField('password', value)}
+          />
           {mode === 'register' && (
             <>
-              <label>Gentag password<input required type="password" placeholder="Skriv dit password..." value={form.confirmPassword} onChange={(event) => updateField('confirmPassword', event.target.value)} /></label>
-              <label>Fornavn<input required placeholder="Skriv dit fornavn..." value={form.firstname} onChange={(event) => updateField('firstname', event.target.value)} /></label>
-              <label>Efternavn<input required placeholder="Skriv dit efternavn..." value={form.lastname} onChange={(event) => updateField('lastname', event.target.value)} /></label>
-              <label>Telefon nummer<input placeholder="Skriv dit telefon nummer..." value={form.phone} onChange={(event) => updateField('phone', event.target.value)} /></label>
+              <AuthField
+                label="Gentag password"
+                type="password"
+                required
+                placeholder="Skriv dit password..."
+                value={form.confirmPassword}
+                onChange={(value) => updateField('confirmPassword', value)}
+              />
+              <AuthField
+                label="Fornavn"
+                required
+                placeholder="Skriv dit fornavn..."
+                value={form.firstname}
+                onChange={(value) => updateField('firstname', value)}
+              />
+              <AuthField
+                label="Efternavn"
+                required
+                placeholder="Skriv dit efternavn..."
+                value={form.lastname}
+                onChange={(value) => updateField('lastname', value)}
+              />
+              <AuthField
+                label="Telefon nummer"
+                placeholder="Skriv dit telefon nummer..."
+                value={form.phone}
+                onChange={(value) => updateField('phone', value)}
+              />
             </>
           )}
           {error && <p className="auth-error">{error}</p>}
