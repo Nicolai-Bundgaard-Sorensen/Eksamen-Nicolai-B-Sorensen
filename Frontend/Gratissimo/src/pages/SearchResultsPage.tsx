@@ -1,78 +1,81 @@
-import { useEffect, useMemo, useState } from 'react'
-import SearchControls from '../components/SearchControls'
-import favoriteIcon from '../assets/icons/icons8-favorite-50.png'
-import openIcon from '../assets/icons/icons8-forward-30.png'
-import backIcon from '../assets/icons/icons8-back-30.png'
-import nextIcon from '../assets/icons/icons8-forward-30.png'
+import { useEffect, useMemo, useState } from "react";
+import SearchControls from "../components/SearchControls";
+import favoriteIcon from "../assets/icons/icons8-favorite-50.png";
+import openIcon from "../assets/icons/icons8-forward-30.png";
+import backIcon from "../assets/icons/icons8-back-30.png";
+import nextIcon from "../assets/icons/icons8-forward-30.png";
 
 type JobListing = {
-  id: number
-  title: string
-  description: string
-  organization: string
-  city: string
-  createdAt: string
-  workHome: string
-  region?: { name: string }
-  workType?: { type: string }
-  jobCategory?: { name: string | null }
-}
+  id: number;
+  title: string;
+  description: string;
+  organization: string;
+  city: string;
+  createdAt: string;
+  workHome: string;
+  region?: { name: string };
+  workType?: { type: string };
+  jobCategory?: { name: string | null };
+};
 
 type Region = {
-  id: number
-  name: string
-}
+  id: number;
+  name: string;
+};
 
 type JobCategory = {
-  id: number
-  name: string | null
-}
+  id: number;
+  name: string | null;
+};
 
 type WorkType = {
-  id: number
-  type: string
-}
+  id: number;
+  type: string;
+};
 
-const apiUrl = import.meta.env.VITE_API_URL
-const jobsPerPage = 5
-const visiblePageCount = 8
+const apiUrl = import.meta.env.VITE_API_URL;
+const jobsPerPage = 5;
+const visiblePageCount = 8;
 
 function formatDate(date: string) {
-  const value = new Date(date)
-  return `d. ${value.getDate()}/${value.getMonth() + 1}-${String(value.getFullYear()).slice(-2)}`
+  const value = new Date(date);
+  return `d. ${value.getDate()}/${value.getMonth() + 1}-${String(value.getFullYear()).slice(-2)}`;
 }
 
 function matchesPeriodFilter(createdAt: string, period: string) {
-  const createdDate = new Date(createdAt).getTime()
-  const now = Date.now()
+  const createdDate = new Date(createdAt).getTime();
+  const now = Date.now();
   const periodLength = {
-    'Seneste uge': 7,
-    'Seneste måned': 30,
-    'Seneste år': 365,
-  }[period]
+    "Seneste uge": 7,
+    "Seneste måned": 30,
+    "Seneste år": 365,
+  }[period];
 
-  return periodLength === undefined || now - createdDate <= periodLength * 24 * 60 * 60 * 1000
+  return (
+    periodLength === undefined ||
+    now - createdDate <= periodLength * 24 * 60 * 60 * 1000
+  );
 }
 
 function SearchResultsPage() {
-  const [searchParams, setSearchParams] = useState(window.location.search)
-  const [jobs, setJobs] = useState<JobListing[]>([])
-  const [regions, setRegions] = useState<Region[]>([])
-  const [categories, setCategories] = useState<JobCategory[]>([])
-  const [workTypes, setWorkTypes] = useState<WorkType[]>([])
+  const [searchParams, setSearchParams] = useState(window.location.search);
+  const [jobs, setJobs] = useState<JobListing[]>([]);
+  const [regions, setRegions] = useState<Region[]>([]);
+  const [categories, setCategories] = useState<JobCategory[]>([]);
+  const [workTypes, setWorkTypes] = useState<WorkType[]>([]);
 
-  const params = new URLSearchParams(searchParams)
-  const query = params.get('q')?.trim() ?? ''
+  const params = new URLSearchParams(searchParams);
+  const query = params.get("q")?.trim() ?? "";
 
   useEffect(() => {
-    const updateSearch = () => setSearchParams(window.location.search)
-    window.addEventListener('locationchange', updateSearch)
-    window.addEventListener('popstate', updateSearch)
+    const updateSearch = () => setSearchParams(window.location.search);
+    window.addEventListener("locationchange", updateSearch);
+    window.addEventListener("popstate", updateSearch);
     return () => {
-      window.removeEventListener('locationchange', updateSearch)
-      window.removeEventListener('popstate', updateSearch)
-    }
-  }, [])
+      window.removeEventListener("locationchange", updateSearch);
+      window.removeEventListener("popstate", updateSearch);
+    };
+  }, []);
 
   useEffect(() => {
     Promise.all([
@@ -81,69 +84,106 @@ function SearchResultsPage() {
       fetch(`${apiUrl}/api/job-categories`),
       fetch(`${apiUrl}/api/workTypes`),
     ])
-      .then(async ([jobsResponse, regionsResponse, categoriesResponse, workTypesResponse]) => {
-        if (jobsResponse.ok) setJobs(await jobsResponse.json())
-        if (regionsResponse.ok) setRegions(await regionsResponse.json())
-        if (categoriesResponse.ok) setCategories(await categoriesResponse.json())
-        if (workTypesResponse.ok) setWorkTypes(await workTypesResponse.json())
-      })
+      .then(
+        async ([
+          jobsResponse,
+          regionsResponse,
+          categoriesResponse,
+          workTypesResponse,
+        ]) => {
+          if (jobsResponse.ok) setJobs(await jobsResponse.json());
+          if (regionsResponse.ok) setRegions(await regionsResponse.json());
+          if (categoriesResponse.ok)
+            setCategories(await categoriesResponse.json());
+          if (workTypesResponse.ok)
+            setWorkTypes(await workTypesResponse.json());
+        },
+      )
       .catch(() => {
-        setJobs([])
-        setRegions([])
-        setCategories([])
-        setWorkTypes([])
-      })
-  }, [])
+        setJobs([]);
+        setRegions([]);
+        setCategories([]);
+        setWorkTypes([]);
+      });
+  }, []);
 
   const results = useMemo(() => {
-    const params = new URLSearchParams(searchParams)
-    const query = params.get('q')?.trim() ?? ''
-    const search = query.toLowerCase()
+    const params = new URLSearchParams(searchParams);
+    const query = params.get("q")?.trim() ?? "";
+    const search = query.toLowerCase();
     return jobs.filter((job) => {
-      const matchesSearch = !search || `${job.title} ${job.description}`.toLowerCase().includes(search)
-      const matchesRegion = !params.get('region') || job.region?.name === params.get('region')
-      const matchesCategory = !params.get('category') || job.jobCategory?.name === params.get('category')
-      const matchesWorkType = !params.get('workType') || job.workType?.type === params.get('workType')
-      const matchesWorkHome = !params.get('workHome') || job.workHome === params.get('workHome')
-      const matchesPeriod = !params.get('period') || matchesPeriodFilter(job.createdAt, params.get('period') ?? '')
+      const matchesSearch =
+        !search ||
+        `${job.title} ${job.description}`.toLowerCase().includes(search);
+      const matchesRegion =
+        !params.get("region") || job.region?.name === params.get("region");
+      const matchesCategory =
+        !params.get("category") ||
+        job.jobCategory?.name === params.get("category");
+      const matchesWorkType =
+        !params.get("workType") ||
+        job.workType?.type === params.get("workType");
+      const matchesWorkHome =
+        !params.get("workHome") || job.workHome === params.get("workHome");
+      const matchesPeriod =
+        !params.get("period") ||
+        matchesPeriodFilter(job.createdAt, params.get("period") ?? "");
 
-      return matchesSearch && matchesRegion && matchesCategory && matchesWorkType && matchesWorkHome && matchesPeriod
-    })
-  }, [jobs, searchParams])
+      return (
+        matchesSearch &&
+        matchesRegion &&
+        matchesCategory &&
+        matchesWorkType &&
+        matchesWorkHome &&
+        matchesPeriod
+      );
+    });
+  }, [jobs, searchParams]);
 
   const filterOptions = {
     region: regions.map((region) => region.name),
-    category: categories.map((category) => category.name ?? '').filter(Boolean),
+    category: categories.map((category) => category.name ?? "").filter(Boolean),
     workType: workTypes.map((workType) => workType.type),
     workHome: [...new Set(jobs.map((job) => job.workHome).filter(Boolean))],
-  }
+  };
 
-  const requestedPage = Math.max(1, Number(params.get('page')) || 1)
-  const totalPages = Math.ceil(results.length / jobsPerPage)
-  const currentPage = Math.min(requestedPage, Math.max(totalPages, 1))
+  const requestedPage = Math.max(1, Number(params.get("page")) || 1);
+  const totalPages = Math.ceil(results.length / jobsPerPage);
+  const currentPage = Math.min(requestedPage, Math.max(totalPages, 1));
   const visibleResults = results.slice(
     (currentPage - 1) * jobsPerPage,
     currentPage * jobsPerPage,
-  )
+  );
   const firstVisiblePage = Math.min(
     Math.max(1, currentPage - visiblePageCount + 1),
     Math.max(1, totalPages - visiblePageCount + 1),
-  )
-  const lastVisiblePage = Math.min(totalPages, firstVisiblePage + visiblePageCount - 1)
+  );
+  const lastVisiblePage = Math.min(
+    totalPages,
+    firstVisiblePage + visiblePageCount - 1,
+  );
 
   function changePage(page: number) {
-    const nextParams = new URLSearchParams(searchParams)
-    if (page === 1) nextParams.delete('page')
-    else nextParams.set('page', String(page))
+    const nextParams = new URLSearchParams(searchParams);
+    if (page === 1) nextParams.delete("page");
+    else nextParams.set("page", String(page));
 
-    const queryString = nextParams.toString()
-    window.history.pushState({}, '', queryString ? `/search-results?${queryString}` : '/search-results')
-    window.dispatchEvent(new Event('locationchange'))
+    const queryString = nextParams.toString();
+    window.history.pushState(
+      {},
+      "",
+      queryString ? `/search-results?${queryString}` : "/search-results",
+    );
+    window.dispatchEvent(new Event("locationchange"));
   }
 
   return (
     <section>
-      <SearchControls key={searchParams} initialQuery={query} options={filterOptions} />
+      <SearchControls
+        key={searchParams}
+        initialQuery={query}
+        options={filterOptions}
+      />
       <div className="results-list">
         {visibleResults.map((job) => (
           <article className="result-card" key={job.id}>
@@ -183,7 +223,7 @@ function SearchResultsPage() {
               (_, index) => firstVisiblePage + index,
             ).map((page) => (
               <button
-                className={page === currentPage ? 'active' : ''}
+                className={page === currentPage ? "active" : ""}
                 type="button"
                 key={page}
                 onClick={() => changePage(page)}
@@ -202,7 +242,7 @@ function SearchResultsPage() {
         )}
       </div>
     </section>
-  )
+  );
 }
 
-export default SearchResultsPage
+export default SearchResultsPage;
