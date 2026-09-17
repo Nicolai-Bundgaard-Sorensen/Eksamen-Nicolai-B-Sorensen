@@ -30,8 +30,8 @@ export class UserController {
     const item = await prisma.user.create({
       data: {
         ...data,
-        phone: phone,
-        zipcode: zipcode,
+        phone: phone ?? Prisma.skip,
+        zipcode: zipcode ?? Prisma.skip,
         password: passwordHashed,
       },
     });

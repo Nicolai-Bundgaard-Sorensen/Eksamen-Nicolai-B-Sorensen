@@ -69,6 +69,20 @@
   background: var(--white);
 }
 
+.nav-actions a.active {
+  position: relative;
+}
+
+.nav-actions a.active::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  bottom: -6px;
+  left: 0;
+  height: 3px;
+  background: var(--white);
+}
+
 .nav-links a:hover,
 .nav-actions a:hover {
   text-decoration: underline;
