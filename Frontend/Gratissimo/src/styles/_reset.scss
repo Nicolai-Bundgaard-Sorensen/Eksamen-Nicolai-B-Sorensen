@@ -6,6 +6,7 @@
   --white: #ffffff;
   --alt-white: #f5eeee;
   --black: #111111;
+  --font-alt: "Montserrat", sans-serif;
   --font-main: "Montserrat", sans-serif;
 
   font-family: var(--font-main);
@@ -27,6 +28,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  font-family: var(--font-main);
   background: var(--main);
 }
 img {
