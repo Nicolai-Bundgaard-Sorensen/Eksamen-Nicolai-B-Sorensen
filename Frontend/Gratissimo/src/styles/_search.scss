@@ -379,4 +379,11 @@
   .result-card-side {
     width: auto;
   }
+
+  .results-pagination {
+    width: min(100%, calc(100vw - 36px));
+    max-width: 100%;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
 }

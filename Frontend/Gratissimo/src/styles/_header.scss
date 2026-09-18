@@ -86,11 +86,13 @@
 }
 
 @media (max-width: 640px) {
-  .header-inner,
-  .main-nav {
+  .header-inner {
     width: calc(100% - 36px);
-    padding-left: 0;
-    padding-right: 0;
+  }
+
+  .main-nav {
+    width: 100%;
+    padding: 12px 18px;
   }
 
   .header-inner {
@@ -106,6 +108,12 @@
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
+    width: 100%;
+  }
+
+  .nav-links a,
+  .nav-actions a {
+    max-width: 100%;
   }
 
   .nav-actions a + a {

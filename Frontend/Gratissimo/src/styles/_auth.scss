@@ -47,6 +47,12 @@
   padding: 32px 0 38px;
 }
 
+@media (max-width: 360px) {
+  .auth-form-section {
+    width: calc(100% - 36px);
+  }
+}
+
 .auth-form-section h2 {
   margin: 0 0 20px;
   text-align: center;

@@ -145,6 +145,7 @@
 @media (max-width: 640px) {
   .create-job-form {
     grid-template-columns: 1fr;
+    padding-top: 22px;
   }
 
   .create-job-description,
@@ -155,5 +156,9 @@
 
   .create-job-form > button {
     justify-self: start;
+  }
+
+  .create-job-description {
+    min-height: 180px;
   }
 }
