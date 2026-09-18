@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import type { MouseEvent } from "react";
+import type { FormEvent, MouseEvent } from "react";
 import "./styles/main.scss";
 import HomePage from "./pages/HomePage";
 import SearchResultsPage from "./pages/SearchResultsPage";
 import NewsDetailPage from "./pages/NewsDetailPage";
 import AuthPage from "./pages/AuthPage";
 import CreateJobPage from "./pages/CreateJobPage";
+import MinSidePage from "./pages/MinSidePage";
 import { AuthProvider } from "./context/AuthContext";
 import { useAuth } from "./hooks/useAuth";
 import logoWhite from "./assets/logo/logo-white.png";
@@ -56,12 +57,15 @@ function AppShell() {
   const isRegisterPage =
     currentPath === "/login" &&
     currentUrl.searchParams.get("mode") === "register";
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, accessToken, logout } = useAuth();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
+  const [newsletterMessage, setNewsletterMessage] = useState("");
+  const [newsletterError, setNewsletterError] = useState("");
 
   function handleLogout(event: MouseEvent<HTMLAnchorElement>) {
     event.preventDefault();
     logout().then(() => {
-      window.history.pushState({}, "", "/");
+      window.history.pushState({}, "", "/login");
       window.dispatchEvent(new Event("locationchange"));
     });
   }
@@ -84,9 +88,55 @@ function AppShell() {
     <AuthPage />
   ) : currentPath === "/opret-annonce" ? (
     <CreateJobPage />
+  ) : currentPath === "/min-side" ? (
+    <MinSidePage />
   ) : (
     <HomePage />
   );
+
+  function goToMyPage(event: MouseEvent<HTMLAnchorElement>) {
+    event.preventDefault();
+    window.history.pushState({}, "", "/min-side");
+    window.dispatchEvent(new Event("locationchange"));
+  }
+
+  async function subscribeToNewsletter(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setNewsletterMessage("");
+    setNewsletterError("");
+
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newsletterEmail)) {
+      setNewsletterError("Indtast en gyldig emailadresse.");
+      return;
+    }
+
+    if (!accessToken) {
+      setNewsletterError("Du skal være logget ind for at tilmelde dig nyhedsbrevet.");
+      return;
+    }
+
+    try {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/newsletter`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: new URLSearchParams({ email: newsletterEmail }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setNewsletterError(data.error ?? "Tilmelding kunne ikke gennemføres.");
+        return;
+      }
+
+      setNewsletterEmail("");
+      setNewsletterMessage("Du er nu tilmeldt nyhedsbrevet.");
+    } catch {
+      setNewsletterError("Der kunne ikke oprettes forbindelse til serveren.");
+    }
+  }
 
   return (
     <div className="app-shell">
@@ -119,7 +169,13 @@ function AppShell() {
           <div className="nav-actions">
             {isAuthenticated ? (
               <>
-                <a href="/min-side">Min side</a>
+                <a
+                  className={currentPath === "/min-side" ? "active" : ""}
+                  href="/min-side"
+                  onClick={goToMyPage}
+                >
+                  Min side
+                </a>
                 <a href="/" onClick={handleLogout}>
                   Log ud
                 </a>
@@ -168,11 +224,22 @@ function AppShell() {
             <p>Tilmed dig vores elektroniske nyhedsbrev</p>
             <form
               className="newsletter"
-              onSubmit={(event) => event.preventDefault()}
+              onSubmit={subscribeToNewsletter}
             >
-              <input type="email" placeholder="Indtast email..." />
+              <input
+                type="email"
+                value={newsletterEmail}
+                onChange={(event) => setNewsletterEmail(event.target.value)}
+                placeholder="Indtast email..."
+              />
               <button type="submit">Tilmeld</button>
             </form>
+            {newsletterError && (
+              <p className="newsletter-message error">{newsletterError}</p>
+            )}
+            {newsletterMessage && (
+              <p className="newsletter-message success">{newsletterMessage}</p>
+            )}
           </div>
 
           <div className="footer-column footer-meta">

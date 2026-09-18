@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import SearchControls from "../components/SearchControls";
+import { useFavorites } from "../hooks/useFavorites";
 import favoriteIcon from "../assets/icons/icons8-favorite-50.png";
 import openIcon from "../assets/icons/icons8-forward-30.png";
 import backIcon from "../assets/icons/icons8-back-30.png";
@@ -63,6 +64,8 @@ function SearchResultsPage() {
   const [regions, setRegions] = useState<Region[]>([]);
   const [categories, setCategories] = useState<JobCategory[]>([]);
   const [workTypes, setWorkTypes] = useState<WorkType[]>([]);
+  const [expandedJobId, setExpandedJobId] = useState<number | null>(null);
+  const { isFavorite, saveFavorite, message: favoriteMessage } = useFavorites();
 
   const params = new URLSearchParams(searchParams);
   const query = params.get("q")?.trim() ?? "";
@@ -185,24 +188,56 @@ function SearchResultsPage() {
         options={filterOptions}
       />
       <div className="results-list">
+        {favoriteMessage && <p className="favorite-message">{favoriteMessage}</p>}
         {visibleResults.map((job) => (
-          <article className="result-card" key={job.id}>
+          <article
+            className={`result-card ${expandedJobId === job.id ? "expanded" : ""}`}
+            key={job.id}
+          >
             <div className="result-card-main">
-              <p className="result-company">Organisation: {job.organization}</p>
+              <p className="result-company">{job.organization}</p>
               <h2>{job.title}</h2>
+              {expandedJobId === job.id && (
+                <p className="result-category">{job.jobCategory?.name ?? "Kategori"}</p>
+              )}
               <p className="result-description">{job.description}</p>
+              {expandedJobId === job.id && (
+                <div className="result-expanded-details">
+                  <div>
+                    <strong>Beskrivelse</strong>
+                    <p>{job.description}</p>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="result-card-side">
-              <p>Lokation: {job.city}</p>
+              <p>Lokation: {job.region?.name ?? job.city}</p>
               <p>Indrykket: {formatDate(job.createdAt)}</p>
+              {expandedJobId === job.id && (
+                <>
+                  <p>Arbejdstid: {job.workType?.type ?? "Ikke oplyst"}</p>
+                  <p>Hjemmearbejde: {job.workHome}</p>
+                  <div className="result-contact">
+                    <strong>Kontakt</strong>
+                    <p>{job.organization}</p>
+                  </div>
+                </>
+              )}
               <div className="result-actions">
-                <button type="button">
-                  <img src={favoriteIcon} alt="" />
+                <button
+                  className={isFavorite(job.id) ? "favorite-saved" : ""}
+                  type="button"
+                  onClick={() => saveFavorite(job.id)}
+                >
                   Gem
+                  <img src={favoriteIcon} alt="" />
                 </button>
-                <button type="button">
+                <button
+                  type="button"
+                  onClick={() => setExpandedJobId((id) => id === job.id ? null : job.id)}
+                >
                   <img src={openIcon} alt="" />
-                  Åben
+                  {expandedJobId === job.id ? "Luk" : "Åben"}
                 </button>
               </div>
             </div>

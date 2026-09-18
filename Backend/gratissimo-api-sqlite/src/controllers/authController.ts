@@ -137,14 +137,17 @@ export class AuthController {
 
     const token = bearerHeader.split(" ")[1];
 
-    const decoded = jwt.verify(
-      token,
-      process.env.TOKEN_ACCESS_KEY!,
-    ) as JwtPayload;
+    try {
+      const decoded = jwt.verify(
+        token,
+        process.env.TOKEN_ACCESS_KEY!,
+      ) as JwtPayload;
 
-    req.user = decoded.data;
-
-    return next();
+      req.user = decoded.data;
+      return next();
+    } catch {
+      throw new AppError(401, "Token not accepted");
+    }
   };
 }
 
