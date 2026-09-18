@@ -134,7 +134,7 @@ function HomePage() {
     <section className="home-top">
       <div className="home-intro">
         <p>Vi hjælper dig på vej til dit næste frivillige job</p>
-        <a href="#">Log ind eller opret dig</a>
+        <a href="/login">Log ind eller opret dig</a>
       </div>
 
       <SearchControls options={filterOptions} />

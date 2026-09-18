@@ -48,13 +48,30 @@ export class UserJobFavoriteController {
     const user = req.user;
     const data = { ...req.body };
     if (!user) {
-      throw new AppError(
-        500,
-        "User not found - make sure you sent the bearer token",
-      );
+      throw new AppError(401, "User not found - please log in again");
     }
+
     const userId = user.id;
     const jobListingId = parseInt(data.jobListingId);
+
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!existingUser) {
+      throw new AppError(401, "User not found - please log in again");
+    }
+
+    if (!Number.isInteger(jobListingId)) {
+      throw new AppError(400, "A valid job listing ID is required");
+    }
+
+    const jobListing = await prisma.jobListing.findUnique({
+      where: { id: jobListingId },
+    });
+    if (!jobListing) {
+      throw new AppError(404, "Job listing not found");
+    }
+
     const item = await prisma.userJobFavorite.create({
       data: { userId, jobListingId },
     });

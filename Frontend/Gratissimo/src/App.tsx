@@ -18,20 +18,29 @@ import linkedInIcon from "./assets/icons/SoMe/LinkedIn Circled.png";
 const footerColumns = [
   {
     title: "For jobsøgere",
-    links: ["Din kundeside", "Opret Profil", "Gemte jobs"],
+    links: [
+      ["Din kundeside", "/min-side"],
+      ["Opret Profil", "/login?mode=register"],
+      ["Gemte jobs", "/min-side?tab=favorites"],
+    ],
   },
   {
     title: "For arbejdsgivere",
     links: [
-      "Virksomhedsprofil",
-      "Opret annonce",
-      "Jobannoncering",
-      "Rekruttering",
+      ["Virksomhedsprofil", "#"],
+      ["Opret annonce", "/opret-annonce"],
+      ["Jobannoncering", "#"],
+      ["Rekruttering", "#"],
     ],
   },
   {
     title: "Links",
-    links: ["Om Gratissimo", "Job hos os", "For investorer", "Presse"],
+    links: [
+      ["Om Gratissimo", "#"],
+      ["Job hos os", "#"],
+      ["For investorer", "#"],
+      ["Presse", "#"],
+    ],
   },
 ];
 
@@ -111,19 +120,24 @@ function AppShell() {
     }
 
     if (!accessToken) {
-      setNewsletterError("Du skal være logget ind for at tilmelde dig nyhedsbrevet.");
+      setNewsletterError(
+        "Du skal være logget ind for at tilmelde dig nyhedsbrevet.",
+      );
       return;
     }
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/newsletter`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Content-Type": "application/x-www-form-urlencoded",
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/newsletter`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: new URLSearchParams({ email: newsletterEmail }),
         },
-        body: new URLSearchParams({ email: newsletterEmail }),
-      });
+      );
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
@@ -149,7 +163,14 @@ function AppShell() {
 
         <nav className="main-nav">
           <div className="nav-links">
-            <a className={currentPath === "/" ? "active" : ""} href="/">
+            <a
+              className={
+                currentPath === "/" || currentPath === "/search-results"
+                  ? "active"
+                  : ""
+              }
+              href="/search-results"
+            >
               Alle Jobs
             </a>
             <a
@@ -210,9 +231,9 @@ function AppShell() {
             <div className="footer-column" key={column.title}>
               <h3>{column.title}</h3>
               <ul>
-                {column.links.map((link) => (
-                  <li key={link}>
-                    <a href="#">{link}</a>
+                {column.links.map(([label, href]) => (
+                  <li key={label}>
+                    <a href={href}>{label}</a>
                   </li>
                 ))}
               </ul>
@@ -222,10 +243,7 @@ function AppShell() {
           <div className="footer-column footer-contact">
             <h3>Vil du have jobs direkte i din indbakke?</h3>
             <p>Tilmed dig vores elektroniske nyhedsbrev</p>
-            <form
-              className="newsletter"
-              onSubmit={subscribeToNewsletter}
-            >
+            <form className="newsletter" onSubmit={subscribeToNewsletter}>
               <input
                 type="email"
                 value={newsletterEmail}

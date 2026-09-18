@@ -188,7 +188,9 @@ function SearchResultsPage() {
         options={filterOptions}
       />
       <div className="results-list">
-        {favoriteMessage && <p className="favorite-message">{favoriteMessage}</p>}
+        {favoriteMessage && (
+          <p className="favorite-message">{favoriteMessage}</p>
+        )}
         {visibleResults.map((job) => (
           <article
             className={`result-card ${expandedJobId === job.id ? "expanded" : ""}`}
@@ -198,7 +200,9 @@ function SearchResultsPage() {
               <p className="result-company">{job.organization}</p>
               <h2>{job.title}</h2>
               {expandedJobId === job.id && (
-                <p className="result-category">{job.jobCategory?.name ?? "Kategori"}</p>
+                <p className="result-category">
+                  {job.jobCategory?.name ?? "Kategori"}
+                </p>
               )}
               <p className="result-description">{job.description}</p>
               {expandedJobId === job.id && (
@@ -234,7 +238,9 @@ function SearchResultsPage() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setExpandedJobId((id) => id === job.id ? null : job.id)}
+                  onClick={() =>
+                    setExpandedJobId((id) => (id === job.id ? null : job.id))
+                  }
                 >
                   <img src={openIcon} alt="" />
                   {expandedJobId === job.id ? "Luk" : "Åben"}

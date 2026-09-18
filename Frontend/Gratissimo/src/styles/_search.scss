@@ -293,7 +293,8 @@
 }
 
 .result-actions button.favorite-saved img {
-  filter: brightness(0) saturate(100%) invert(16%) sepia(92%) saturate(3000%) hue-rotate(350deg) brightness(85%);
+  filter: brightness(0) saturate(100%) invert(16%) sepia(92%) saturate(3000%)
+    hue-rotate(350deg) brightness(85%);
 }
 
 .empty-results {

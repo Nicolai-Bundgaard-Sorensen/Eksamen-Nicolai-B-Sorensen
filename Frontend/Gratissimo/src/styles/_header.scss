@@ -56,31 +56,11 @@
 }
 
 .nav-links a.active {
-  position: relative;
-}
-
-.nav-links a.active::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -6px;
-  left: 0;
-  height: 3px;
-  background: var(--white);
+  text-decoration: underline;
 }
 
 .nav-actions a.active {
-  position: relative;
-}
-
-.nav-actions a.active::after {
-  content: '';
-  position: absolute;
-  right: 0;
-  bottom: -6px;
-  left: 0;
-  height: 3px;
-  background: var(--white);
+  text-decoration: underline;
 }
 
 .nav-links a:hover,
