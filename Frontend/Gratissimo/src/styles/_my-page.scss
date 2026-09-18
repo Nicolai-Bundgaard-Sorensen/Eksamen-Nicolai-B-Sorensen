@@ -1,0 +1,138 @@
+.my-page {
+  min-height: 540px;
+  background: var(--white);
+  color: var(--black);
+}
+
+.my-page-header {
+  min-height: 230px;
+  padding: 42px 24px 28px;
+  text-align: center;
+  background: var(--alt-white);
+}
+
+.my-page-header h1 {
+  margin: 0;
+  font-size: 1.55rem;
+  font-weight: 400;
+}
+
+.my-page-header p {
+  max-width: 520px;
+  margin: 22px auto 0;
+  font-size: 0.68rem;
+}
+
+.my-page-links {
+  display: flex;
+  justify-content: flex-end;
+  width: min(100%, 900px);
+  margin: 50px auto 0;
+  gap: 20px;
+}
+
+.my-page-links a {
+  color: var(--accent);
+  font-size: 0.62rem;
+  text-decoration: underline;
+}
+
+.my-page-tabs {
+  width: min(calc(100% - 48px), 290px);
+  margin: 22px auto 20px;
+  display: flex;
+  overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--black) 14%, transparent);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.my-page-tabs button {
+  flex: 1;
+  height: 28px;
+  border: 0;
+  background: transparent;
+  color: var(--black);
+  cursor: pointer;
+  font-size: 0.62rem;
+}
+
+.my-page-tabs button.active {
+  background: var(--accent);
+  color: var(--white);
+}
+
+.my-page-list {
+  width: min(calc(100% - 24px), 1040px);
+  margin: 0 auto;
+  padding-bottom: 36px;
+}
+
+.my-page-error,
+.my-page-empty {
+  width: min(calc(100% - 48px), 900px);
+  margin: 0 auto 20px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
+.my-page-pagination {
+  width: fit-content;
+  min-height: 44px;
+  padding: 5px 14px;
+  margin: 18px auto 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid color-mix(in srgb, var(--black) 18%, transparent);
+  border-radius: 999px;
+  background: var(--white);
+}
+
+.my-page-pagination button {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid color-mix(in srgb, var(--black) 14%, transparent);
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  font-size: 0.72rem;
+}
+
+.my-page-pagination button.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--white);
+}
+
+.my-page-pagination button:first-child,
+.my-page-pagination button:last-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.my-page-pagination img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+
+.my-page .result-actions .danger-action {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--white);
+}
+
+@media (max-width: 640px) {
+  .my-job-card {
+    flex-direction: column;
+  }
+
+  .my-job-side {
+    width: auto;
+  }
+}

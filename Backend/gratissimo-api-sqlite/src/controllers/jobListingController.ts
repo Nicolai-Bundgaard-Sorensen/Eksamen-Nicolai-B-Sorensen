@@ -26,14 +26,22 @@ export class JobListingController {
   createJobListing = async (req: Request, res: Response) => {
     const data = { ...req.body };
     const workHome = data.workHome;
-
-    console.log("WorkHome is", workHome);
-
     const zipCode = parseInt(data.zipcode);
     const regionId = parseInt(data.regionId);
     const userId = parseInt(data.userId);
     const jobCategoryId = parseInt(data.jobCategoryId);
     const workTypeId = parseInt(data.workTypeId);
+
+    if (!data.title) throw new AppError(400, "Title is required");
+    if (!data.description) throw new AppError(400, "Description is required");
+    if (!data.organization) throw new AppError(400, "Organization is required");
+    if (!data.address) throw new AppError(400, "Address is required");
+    if (!data.city) throw new AppError(400, "City is required");
+    if (!Number.isInteger(zipCode)) throw new AppError(400, "Zipcode must be a number");
+    if (!Number.isInteger(regionId)) throw new AppError(400, "Region is required");
+    if (!Number.isInteger(userId)) throw new AppError(400, "User is required");
+    if (!Number.isInteger(jobCategoryId)) throw new AppError(400, "Job category is required");
+    if (!Number.isInteger(workTypeId)) throw new AppError(400, "Work type is required");
 
     if (
       workHome !== "On-site" &&
@@ -47,7 +55,12 @@ export class JobListingController {
     }
     const item = await prisma.jobListing.create({
       data: {
-        ...data,
+        title: data.title,
+        description: data.description,
+        address: data.address,
+        city: data.city,
+        organization: data.organization,
+        workHome,
         zipcode: zipCode,
         regionId: regionId,
         userId: userId,

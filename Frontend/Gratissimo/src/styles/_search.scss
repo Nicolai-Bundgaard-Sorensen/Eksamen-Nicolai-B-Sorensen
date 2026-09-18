@@ -146,6 +146,12 @@
   color: var(--black);
 }
 
+.result-card.expanded {
+  align-items: stretch;
+  min-height: 260px;
+  padding-bottom: 16px;
+}
+
 .result-card-main {
   min-width: 0;
   flex: 1;
@@ -154,6 +160,12 @@
 .result-card p,
 .result-card h2 {
   margin: 0;
+}
+
+.result-category {
+  margin-top: 5px !important;
+  font-size: 0.62rem;
+  font-weight: 600;
 }
 
 .result-company {
@@ -181,9 +193,35 @@
   line-height: 1.35;
 }
 
+.result-card.expanded .result-description {
+  display: none;
+}
+
+.result-expanded-details {
+  margin-top: 14px;
+  font-size: 0.62rem;
+  line-height: 1.4;
+}
+
+.result-expanded-details > div + div {
+  margin-top: 10px;
+}
+
+.result-expanded-details strong {
+  display: block;
+  font-weight: 600;
+}
+
+.result-expanded-details p {
+  max-width: 610px;
+  margin-top: 3px;
+}
+
 .result-card-side {
   width: 190px;
   flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
   color: var(--black);
   font-size: 0.6rem;
   line-height: 1.25;
@@ -193,10 +231,29 @@
   margin-top: 3px;
 }
 
+.result-contact {
+  margin-top: 20px;
+}
+
+.result-contact strong {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 0.62rem;
+  font-weight: 600;
+}
+
+.result-contact p {
+  margin: 0;
+}
+
 .result-actions {
   display: flex;
   gap: 8px;
   margin-top: 18px;
+}
+
+.result-card.expanded .result-actions {
+  margin-top: auto;
 }
 
 .result-actions button {
@@ -215,10 +272,28 @@
   cursor: pointer;
 }
 
+.result-actions button.favorite-saved {
+  border-color: color-mix(in srgb, var(--black) 14%, transparent);
+  background: var(--alt-white);
+  color: var(--black);
+}
+
+.favorite-message {
+  width: min(calc(100% - 48px), 1040px);
+  margin: 0 auto 12px;
+  color: var(--accent);
+  font-size: 0.7rem;
+  text-align: center;
+}
+
 .result-actions img {
   width: 11px;
   height: 11px;
   object-fit: contain;
+}
+
+.result-actions button.favorite-saved img {
+  filter: brightness(0) saturate(100%) invert(16%) sepia(92%) saturate(3000%) hue-rotate(350deg) brightness(85%);
 }
 
 .empty-results {

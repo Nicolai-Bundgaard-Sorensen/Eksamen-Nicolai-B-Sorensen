@@ -143,7 +143,11 @@ function HomePage() {
         <h2>Find job ved kategori</h2>
         <div className="category-grid">
           {categories.map((category) => (
-            <a className="category-card" href="#" key={category.id}>
+            <a
+              className="category-card"
+              href={`/search-results?category=${encodeURIComponent(category.name ?? "")}`}
+              key={category.id}
+            >
               <span className="category-name">{category.name}</span>
               <span className="category-count">
                 {jobCountByCategory[category.id] ?? 0}
